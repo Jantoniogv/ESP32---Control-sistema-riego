@@ -287,22 +287,19 @@ void InitMqtt()
 
   mqttClient.onMessage(onMqttMessage);
 
-  IPAddress IPMqtt;
-  IPMqtt.fromString(configData.getMqttHost());
+  // mqttClient.setServer(initMqttHost.c_str(), (uint16_t)initMqttPort);
 
-  /* mqttClient.setServer(IPMqtt, configData.getMqttPort().toInt());
+  // mqttClient.setCredentials(initMqttUser.c_str(), initMqttPass.c_str());
 
-  mqttClient.setCredentials(configData.getMqttUser(), configData.getMqttPass()); */
+  mqttClient.setServer(configData.getMqttHost(), configData.getMqttPort());
 
-  mqttClient.setServer(IPAddress(192, 168, 1, 200), 1883);
+   mqttClient.setCredentials(configData.getMqttUser(), configData.getMqttPass());
 
-  mqttClient.setCredentials("mqtt", "mqtt_mqtt");
+   DEBUG_PRINT("Iniciando el servidor mqtt en...");
 
-  DEBUG_PRINT("Iniciando el servidor mqtt en...");
+   DEBUG_PRINT("Ip mqtt: " + initMqttHost + " - User mqtt: " + initMqttUser + " - Pass mqtt: " + initMqttPass + " - Port mqtt: " + String(initMqttPort));
 
-  DEBUG_PRINT("Ip mqtt: " + IPMqtt.toString() + " User mqtt: " + configData.getMqttUser() + " Pass mqtt: " + configData.getMqttPass() + " Port mqtt: " + configData.getMqttPort());
-
-  connectToMqtt();
+   connectToMqtt();
 }
 
 #endif // _MQTT_FUNCTIONS_H

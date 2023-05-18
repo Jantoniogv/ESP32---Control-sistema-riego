@@ -179,12 +179,9 @@ void serverHandlers()
     // Guardamos los cambios
     configData.saveChange();
 
-    //readMemFlash("config", "config");
-
     AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", "<h2>Reiniciando...</h2>");
     request->send(response); 
 
-//vTaskDelay(10);
     ESP.restart(); });
 
   server.on("/reset", HTTP_GET, [](AsyncWebServerRequest *request)

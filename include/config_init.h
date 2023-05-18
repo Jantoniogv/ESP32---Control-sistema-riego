@@ -23,7 +23,7 @@ String initSubnet = "";
 
 // Variables inicializacion mqtt
 String initMqttHost = "192.168.1.200";
-String initMqttPort = "1883";
+uint16_t initMqttPort = 1883;
 String initMqttUser = "mqtt";
 String initMqttPass = "mqtt_mqtt";
 

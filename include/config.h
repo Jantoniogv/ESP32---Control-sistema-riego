@@ -16,29 +16,29 @@ class Config
 {
 private:
     // Variables inicializacion wifi
-    wifi_mode_t wifiType;
+    static wifi_mode_t wifiType;
 
     // Constates conexion STA wifi
-    String ssidSTA;
-    String passSTA;
+    static String ssidSTA;
+    static String passSTA;
 
     // Constates conexion PA wifi
-    String ssidAP;
-    String passAP;
+    static String ssidAP;
+    static String passAP;
 
-    String hostname;
+    static String hostname;
 
-    String IPsta;
-    String gateway;
-    String subnet;
+    static String IPsta;
+    static String gateway;
+    static String subnet;
 
-    String IPap;
+    static String IPap;
 
     // Variables inicializacion mqtt
-    String mqttHost;
-    String mqttPort;
-    String mqttUser;
-    String mqttPass;
+    static String mqttHost;
+    static uint16_t mqttPort;
+    static String mqttUser;
+    static String mqttPass;
 
     // Metodos serializar y deserializar la configuracion
     String SerializeObject()
@@ -112,29 +112,6 @@ public:
     {
         if (!existKey("config", "config"))
         {
-
-            wifiType = initWifiType;
-
-            ssidSTA = initSsidSTA;
-            passSTA = initPassSTA;
-
-            ssidAP = initSsidAP;
-            passAP = initPassAP;
-
-            hostname = initHost;
-
-            IPap = initIPap;
-
-            IPsta = initIPsta;
-            gateway = initGateway;
-            subnet = initSubnet;
-
-            mqttHost = initMqttHost;
-            mqttPort = initMqttPort;
-
-            mqttUser = initMqttUser;
-            mqttPass = initMqttPass;
-
             saveChange();
         }
         else
@@ -144,13 +121,6 @@ public:
 
         // DEBUG_PRINT("Configuracion de red= " + readMemFlash("config", "config"));
     };
-
-    /* static Config *getConfig()
-    {
-        static Config config;
-
-        return &config;
-    } */
 
     void saveChange() { saveMemFlash("config", "config", SerializeObject()); };
 
@@ -170,7 +140,7 @@ public:
     void setIPap(String _IP) { IPap = _IP; };
 
     void setMqttHost(String host) { mqttHost = host; };
-    void setMqttPort(String port) { mqttPort = port; };
+    void setMqttPort(uint16_t port) { mqttPort = port; };
 
     void setMqttUser(String user) { mqttUser = user; };
     void setMqttPass(String pass) { mqttPass = pass; };
@@ -192,11 +162,38 @@ public:
     const String getGateway() { return gateway; };
     const String getSubnet() { return subnet; };
 
-    const String getMqttHost() { return mqttHost; };
-    const String getMqttPort() { return mqttPort; };
+    const char *getMqttHost() { return mqttHost.c_str(); };
+    uint16_t getMqttPort() { return mqttPort; };
 
     const char *getMqttUser() { return mqttUser.c_str(); };
     const char *getMqttPass() { return mqttPass.c_str(); };
 };
+
+/// Inicializacion de las variables estaticas de la clase Config ///
+
+// Variables inicializacion wifi
+wifi_mode_t Config::wifiType = initWifiType;
+
+// Constates conexion STA wifi
+String Config::ssidSTA = initSsidSTA;
+String Config::passSTA = initPassSTA;
+
+// Constates conexion PA wifi
+String Config::ssidAP = initSsidAP;
+String Config::passAP = initPassAP;
+
+String Config::IPap = initIPap;
+
+String Config::hostname = initHost;
+
+String Config::IPsta = initIPsta;
+String Config::gateway = initGateway;
+String Config::subnet = initSubnet;
+
+// Variables inicializacion mqtt
+String Config::mqttHost = initMqttHost;
+uint16_t Config::mqttPort = initMqttPort;
+String Config::mqttUser = initMqttUser;
+String Config::mqttPass = initMqttPass;
 
 #endif //_CONFIG_H_

@@ -9,8 +9,6 @@
 #define DEBUG
 #include "debug_utils.h"
 
-TimerHandle_t wifiReconnectTimer;
-
 void wifiConfigSTA(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000)
 {
 
@@ -39,9 +37,9 @@ void wifiConnectAP()
 
     write_log("IP as soft AP: " + WiFi.softAPIP().toString());
 
-    DEBUG_PRINT("SsidAP: " + static_cast<String>(configData.getSsidAP()));
+    DEBUG_PRINT("SsidAP: " + String(configData.getSsidAP()));
 
-    DEBUG_PRINT("PassAP: " + static_cast<String>(configData.getPassAP()));
+    DEBUG_PRINT("PassAP: " + String(configData.getPassAP()));
 
     DEBUG_PRINT("IP as soft AP: " + WiFi.softAPIP().toString());
 }
@@ -112,7 +110,7 @@ void WiFiEvent(WiFiEvent_t event)
         DEBUG_PRINT("WiFi lost connection");
         write_log("WiFi lost connection");
 
-        xTimerStart(wifiReconnectTimer, 0);
+        wifiConnectSTA();
         break;
     }
 }

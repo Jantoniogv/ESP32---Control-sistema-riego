@@ -15,7 +15,7 @@
 void setup()
 {
   // Borra todas las claves del espacio de nombres en memoria
-  // eraseFlash("config");
+  //eraseFlash("config");
 
   // Inicializa el objeto con la variables de configuracion
   Config configData;
@@ -25,7 +25,6 @@ void setup()
 
   // Iniciamos los temporizadores encargados de reconectar la conexion wifi y mqtt, en caso de desconexion
   mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
-  wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(wifiConnectSTA));
 
   // Se captura los eventos de la conexion wifi
   WiFi.onEvent(WiFiEvent);

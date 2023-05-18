@@ -351,7 +351,7 @@ String nextion_receive_data()
 
     if (nexSerial.available())
     {
-        data = nexSerial.readString();
+        data = nexSerial.readStringUntil(';');
     }
 
     return data;
