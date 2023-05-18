@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
+#include "mqtt_functions.h"
 #include "config.h"
 #include "log.h"
 
@@ -90,6 +91,7 @@ bool wifiConnectSTA()
     return false;
 }
 
+// Gestiona los eventos wifi
 void WiFiEvent(WiFiEvent_t event)
 {
     DEBUG_PRINT("[WiFi-event] event: ");
@@ -105,12 +107,16 @@ void WiFiEvent(WiFiEvent_t event)
 
         write_log("IP as soft STA: ");
         write_log(WiFi.localIP().toString());
+
+        // Conecta al cliente mqtt
+        connectToMqtt();
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         DEBUG_PRINT("WiFi lost connection");
         write_log("WiFi lost connection");
 
-        wifiConnectSTA();
+        // Reconecta el wifi en caso de desconexion
+        WiFi.reconnect();
         break;
     }
 }

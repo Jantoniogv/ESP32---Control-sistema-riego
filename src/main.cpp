@@ -35,9 +35,6 @@ void setup()
   // Iniciamos la conexion wifi como punto de acceso
   wifiConnectAP();
 
-  // Iniciamos la conexion wifi como cliente
-  wifiConnectSTA();
-
   // Inicializa el servidor mqtt
   InitMqtt();
 
@@ -53,7 +50,8 @@ void setup()
   // Inicia la tarea que envia los datos por el puerto serie
   xTaskCreatePinnedToCore(serial_tx, "serial_tx", 2048, nullptr, 0, nullptr, 1);
 
-  // DEBUG_PRINT("Configuracion de red: " + readMemFlash("config", "config"));
+  // Iniciamos la conexion wifi como cliente una vez iniciada todos los procesos a fin de evitar problemas en caso de que la red WiFi no este disponible
+  wifiConnectSTA();
 }
 
 void loop()

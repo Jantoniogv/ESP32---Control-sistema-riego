@@ -7,7 +7,7 @@
 // Variables inicializacion wifi
 wifi_mode_t initWifiType = WIFI_MODE_APSTA;
 
-String initSsidSTA = "DIGIFIBRA-Ap999";
+String initSsidSTA = "DIGIFIBRA-Ap99";
 String initSsidAP = "MyESP32AP_2022";
 
 String initPassSTA = "612018_2482019";

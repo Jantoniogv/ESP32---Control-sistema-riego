@@ -295,11 +295,9 @@ void InitMqtt()
 
    mqttClient.setCredentials(configData.getMqttUser(), configData.getMqttPass());
 
-   DEBUG_PRINT("Iniciando el servidor mqtt en...");
+   DEBUG_PRINT("Configurado el cliente mqtt en...");
 
    DEBUG_PRINT("Ip mqtt: " + initMqttHost + " - User mqtt: " + initMqttUser + " - Pass mqtt: " + initMqttPass + " - Port mqtt: " + String(initMqttPort));
-
-   connectToMqtt();
 }
 
 #endif // _MQTT_FUNCTIONS_H
