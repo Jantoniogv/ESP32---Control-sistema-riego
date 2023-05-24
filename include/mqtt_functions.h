@@ -248,7 +248,7 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
 
   if (WiFi.isConnected())
   {
-    xTimerStart(mqttReconnectTimer, 0);
+    xTimerStart(mqttReconnectTimer, 100);
   }
 }
 

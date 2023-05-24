@@ -1,6 +1,7 @@
 #ifndef _LOG_H_
 #define _LOG_H_
 #include <Arduino.h>
+#include "time_npt.h"
 
 String _log = "";
 
@@ -15,7 +16,7 @@ void write_log(String data)
 
     if (_log.length() < 2000)
     {
-        line = (String)millis() + ": " + data + "\n";
+        line = get_time() + (String)millis() + ": " + data + "\n";
         _log.concat(line);
     }
     else

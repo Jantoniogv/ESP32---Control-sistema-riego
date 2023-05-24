@@ -10,6 +10,45 @@
 #define DEBUG
 #include "debug_utils.h"
 
+TimerHandle_t wifiReconnectTimer;
+
+// Monitorea los eventos wifi
+void WiFiEvent(WiFiEvent_t event)
+{
+    DEBUG_PRINT("[WiFi-event] event: ");
+    DEBUG_PRINT(event);
+
+    switch (event)
+    {
+    case SYSTEM_EVENT_STA_GOT_IP:
+
+        DEBUG_PRINT("WiFi connected");
+        DEBUG_PRINT("IP as soft STA: ");
+        DEBUG_PRINT(WiFi.localIP());
+
+        write_log("IP as soft STA: ");
+        write_log(WiFi.localIP().toString());
+
+        // Conecta al cliente mqtt
+        connectToMqtt();
+        break;
+    case SYSTEM_EVENT_STA_DISCONNECTED:
+        DEBUG_PRINT("WiFi lost connection");
+        write_log("WiFi lost connection");
+
+        /* // Para el timer de reconexion del wifi en caso de que este activo a fin de evitar duplicaciones
+        xTimerStop(wifiReconnectTimer, 100);
+
+        // Inicia el timer del wifi en caso de desconexion
+        xTimerStart(wifiReconnectTimer, 100);
+
+        // Para los eventos del wifi STA
+        // WiFi.removeEvent(WiFiEvent); */
+
+        break;
+    }
+}
+
 void wifiConfigSTA(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000)
 {
 
@@ -51,6 +90,9 @@ bool wifiConnectSTA()
 
     if (configData.getWifiType() != WIFI_MODE_AP)
     {
+        // Para el timer de reconexion del wifi en caso de que este activo a fin de evitar duplicaciones
+        xTimerStop(wifiReconnectTimer, 100);
+
         WiFi.begin(configData.getSsidSTA(), configData.getPassSTA());
 
         if (WiFi.status() != WL_CONNECTED)
@@ -65,11 +107,13 @@ bool wifiConnectSTA()
                 DEBUG_PRINT(".");
                 n++;
             }
+
+            // Inicia el timer del wifi en caso de desconexion
+            xTimerStart(wifiReconnectTimer, 100);
         }
 
         if (WiFi.status() == WL_CONNECTED)
         {
-
             // Configurar la IP del modo cliente en caso de configurar una IP fija
             if (configData.getIPsta() != initIPsta)
             {
@@ -87,37 +131,27 @@ bool wifiConnectSTA()
 
             return true;
         }
+        // Se captura los eventos de la conexion wifi
+        // WiFi.onEvent(WiFiEvent);
     }
     return false;
 }
 
-// Gestiona los eventos wifi
-void WiFiEvent(WiFiEvent_t event)
+void reconnect()
 {
-    DEBUG_PRINT("[WiFi-event] event: ");
-    DEBUG_PRINT(event);
-
-    switch (event)
+    if (WiFi.status() != WL_CONNECTED)
     {
-    case SYSTEM_EVENT_STA_GOT_IP:
+        DEBUG_PRINT("WiFi timer reconnect...");
 
-        DEBUG_PRINT("WiFi connected");
-        DEBUG_PRINT("IP as soft STA: ");
-        DEBUG_PRINT(WiFi.localIP());
+        // Desconecta el wifi a fin de evitar interferencias con el wifi AP generado
+        DEBUG_PRINT("WiFi disconnect");
+        WiFi.disconnect();
 
-        write_log("IP as soft STA: ");
-        write_log(WiFi.localIP().toString());
+        vTaskDelay(pdMS_TO_TICKS(50000));
 
-        // Conecta al cliente mqtt
-        connectToMqtt();
-        break;
-    case SYSTEM_EVENT_STA_DISCONNECTED:
-        DEBUG_PRINT("WiFi lost connection");
-        write_log("WiFi lost connection");
-
-        // Reconecta el wifi en caso de desconexion
+        // Intenta la reconexion
+        DEBUG_PRINT("WiFi reconnect");
         WiFi.reconnect();
-        break;
     }
 }
 
