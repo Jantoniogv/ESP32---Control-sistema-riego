@@ -25,10 +25,11 @@ void serial_rx()
     {
         String data = SerialCom.readStringUntil('\n');
 
-        DEBUG_PRINT("Serial_com_rec: " + data);
-        write_log("SSerial_com_rec: " + data);
+        // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
+        xQueueSend(queue_mqtt_publish, data.c_str(), pdMS_TO_TICKS(100));
 
-        mqttPublish(data);
+        DEBUG_PRINT("Serial_com_rec: " + data);
+        write_log("Serial_com_rec: " + data);
     }
 }
 
