@@ -8,19 +8,10 @@
 #include "log.h"
 
 #include "debug_utils.h"
-#define DEBUG
+// #define DEBUG
 
 void serial_rx()
 {
-    /* if (Serial.available())
-    {
-        String data = Serial.readString();
-
-        SerialCom.print(data);
-
-        // mqttPublish(data);
-    } */
-
     if (SerialCom.available())
     {
         String data = SerialCom.readStringUntil('\n');

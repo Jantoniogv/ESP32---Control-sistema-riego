@@ -7,7 +7,7 @@
 #include "config.h"
 #include "log.h"
 
-#define DEBUG
+// #define DEBUG
 #include "debug_utils.h"
 
 TimerHandle_t wifiReconnectTimer;

@@ -3,7 +3,6 @@
 
 #include "Arduino.h"
 
-// #include "nextion.h"
 #include "device.h"
 #include "serial_tx.h"
 #include "log.h"
@@ -68,20 +67,9 @@ void nextion_send_command(String data)
     nexSerial.write(0xFF);
     nexSerial.write(0xFF);
     nexSerial.write(0xFF);
-}
 
-/* // Funcion que hace una peticion a la pantalla nextion
-String nextion_get(String data)
-{
-    nextion_send_command(data);
-    return nextion_receive_data();
+    write_log("__r__ " + data);
 }
-
-// Funcion que modifica un valor a la pantalla nextion
-void nextion_set(String data)
-{
-    nextion_send_command(data);
-} */
 
 // Funciones que ejecutan los timers y cambian el estado del boton en caso de no recibir la confirmacion del dipositivo
 void await_res_dep_galo_bajo()
@@ -90,11 +78,15 @@ void await_res_dep_galo_bajo()
     {
         nextion_send_command("page0." + btDepGaloBajo + ".val=0");
         s_btDepGaloBajo = false;
+
+        write_log("n__r btDepGaloBajo = false");
     }
     else
     {
         nextion_send_command("page0." + btDepGaloBajo + ".val=1");
         s_btDepGaloBajo = true;
+
+        write_log("n__r btDepGaloBajo = true");
     }
 }
 
@@ -104,11 +96,15 @@ void await_res_dep_huerto()
     {
         nextion_send_command("page0." + btDepHuerto + ".val=0");
         s_btDepHuerto = false;
+
+        write_log("n__r btDepHuerto = true");
     }
     else
     {
         nextion_send_command("page0." + btDepHuerto + ".val=1");
         s_btDepHuerto = true;
+
+        write_log("n__r btDepHuerto = true");
     }
 }
 
@@ -118,11 +114,15 @@ void await_res_agua_casa()
     {
         nextion_send_command("page0." + btAguaCasa + ".val=0");
         s_btAguaCasa = false;
+
+        write_log("n__r btAguaCasa = true");
     }
     else
     {
         nextion_send_command("page0." + btAguaCasa + ".val=1");
         s_btAguaCasa = true;
+
+        write_log("n__r btAguaCasa = true");
     }
 }
 
@@ -203,7 +203,7 @@ void send_dep_galo_bajo(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
 
-    xTimerStart(timer_dep_galo_bajo, 0);
+    xTimerStart(timer_dep_galo_bajo, pdMS_TO_TICKS(10));
 }
 
 void send_dep_huerto(String estado)
@@ -226,7 +226,7 @@ void send_dep_huerto(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
 
-    xTimerStart(timer_dep_huerto, 0);
+    xTimerStart(timer_dep_huerto, pdMS_TO_TICKS(10));
 }
 
 void send_agua_casa(String estado)
@@ -249,7 +249,7 @@ void send_agua_casa(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
 
-    xTimerStart(timer_agua_casa, 0);
+    xTimerStart(timer_agua_casa, pdMS_TO_TICKS(10));
 }
 
 void send_galo_bajo_sec1(String estado)
@@ -272,7 +272,7 @@ void send_galo_bajo_sec1(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
 
-    xTimerStart(timer_galo_bajo_sec1, 0);
+    xTimerStart(timer_galo_bajo_sec1, pdMS_TO_TICKS(10));
 }
 
 void send_galo_bajo_sec2(String estado)
@@ -295,7 +295,7 @@ void send_galo_bajo_sec2(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
 
-    xTimerStart(timer_galo_bajo_sec2, 0);
+    xTimerStart(timer_galo_bajo_sec2, pdMS_TO_TICKS(10));
 }
 
 void send_huerto_sec1(String estado)
@@ -318,7 +318,7 @@ void send_huerto_sec1(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
 
-    xTimerStart(timer_huerto_sec1, 0);
+    xTimerStart(timer_huerto_sec1, pdMS_TO_TICKS(10));
 }
 
 void send_huerto_sec2(String estado)
@@ -341,7 +341,7 @@ void send_huerto_sec2(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
 
-    xTimerStart(timer_huerto_sec2, 0);
+    xTimerStart(timer_huerto_sec2, pdMS_TO_TICKS(10));
 }
 
 // Funcion que comprueba si hay datos disponibles de la pantalla nextion
@@ -429,21 +429,13 @@ void init_nextion()
     // nexSerial.begin(9600);
 
     // Iniciamos los temporizadores encargados de reconectar la conexion wifi y mqtt, en caso de desconexion
-    timer_dep_galo_bajo = xTimerCreate("timer_dep_galo_bajo", pdMS_TO_TICKS(10000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_dep_galo_bajo));
-    timer_dep_huerto = xTimerCreate("timer_dep_huerto", pdMS_TO_TICKS(10000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_dep_huerto));
-    timer_agua_casa = xTimerCreate("timer_agua_casa", pdMS_TO_TICKS(10000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_agua_casa));
-    timer_galo_bajo_sec1 = xTimerCreate("timer_galo_bajo_sec1", pdMS_TO_TICKS(10000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_galo_bajo_sec1));
-    timer_galo_bajo_sec2 = xTimerCreate("timer_galo_bajo_sec2", pdMS_TO_TICKS(10000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_galo_bajo_sec2));
-    timer_huerto_sec1 = xTimerCreate("timer_huerto_sec1", pdMS_TO_TICKS(10000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_huerto_sec1));
-    timer_huerto_sec2 = xTimerCreate("timer_huerto_sec2", pdMS_TO_TICKS(10000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_huerto_sec2));
-
-    // Inicializa los niveles de los depositos a 0 % y el consumo del motor a 0 A
-    Serial.print("\n");
-    /*     tConsumoMotor.setText("20 A");
-
-        tDepGaloBajo.setText("10 %");
-
-        tDepHuerto.setText("55 %"); */
+    timer_dep_galo_bajo = xTimerCreate("timer_dep_galo_bajo", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_dep_galo_bajo));
+    timer_dep_huerto = xTimerCreate("timer_dep_huerto", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_dep_huerto));
+    timer_agua_casa = xTimerCreate("timer_agua_casa", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_agua_casa));
+    timer_galo_bajo_sec1 = xTimerCreate("timer_galo_bajo_sec1", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_galo_bajo_sec1));
+    timer_galo_bajo_sec2 = xTimerCreate("timer_galo_bajo_sec2", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_galo_bajo_sec2));
+    timer_huerto_sec1 = xTimerCreate("timer_huerto_sec1", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_huerto_sec1));
+    timer_huerto_sec2 = xTimerCreate("timer_huerto_sec2", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_huerto_sec2));
 
     // Log de inicio de la pantalla
     write_log("Pantalla nextion iniciada...");

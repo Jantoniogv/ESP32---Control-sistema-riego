@@ -10,7 +10,7 @@
 #include "serial_tx.h"
 #include "log.h"
 
-#define DEBUG
+// #define DEBUG
 #include "debug_utils.h"
 
 // Objeto mqttClient
@@ -70,7 +70,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoState, 1, false, payload.c_str());
 
-        xTimerStop(timer_dep_galo_bajo, 0);
+        xTimerStop(timer_dep_galo_bajo, pdMS_TO_TICKS(10));
 
         if (payload == "ON")
         {
@@ -92,7 +92,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoSec1State, 1, false, payload.c_str());
 
-        xTimerStop(timer_galo_bajo_sec1, 0);
+        xTimerStop(timer_galo_bajo_sec1, pdMS_TO_TICKS(10));
 
         if (payload == "ON")
         {
@@ -114,7 +114,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoSec2State, 1, false, payload.c_str());
 
-        xTimerStop(timer_galo_bajo_sec2, 0);
+        xTimerStop(timer_galo_bajo_sec2, pdMS_TO_TICKS(10));
 
         if (payload == "ON")
         {
@@ -136,7 +136,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoState, 1, false, payload.c_str());
 
-        xTimerStop(timer_dep_huerto, 0);
+        xTimerStop(timer_dep_huerto, pdMS_TO_TICKS(10));
 
         if (payload == "ON")
         {
@@ -158,7 +158,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoSec1State, 1, false, payload.c_str());
 
-        xTimerStop(timer_huerto_sec1, 0);
+        xTimerStop(timer_huerto_sec1, pdMS_TO_TICKS(10));
 
         if (payload == "ON")
         {
@@ -180,7 +180,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoSec2State, 1, false, payload.c_str());
 
-        xTimerStop(timer_huerto_sec2, 0);
+        xTimerStop(timer_huerto_sec2, pdMS_TO_TICKS(10));
 
         if (payload == "ON")
         {
@@ -202,7 +202,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evCasaState, 1, false, payload.c_str());
 
-        xTimerStop(timer_agua_casa, 0);
+        xTimerStop(timer_agua_casa, pdMS_TO_TICKS(10));
 
         if (payload == "ON")
         {
