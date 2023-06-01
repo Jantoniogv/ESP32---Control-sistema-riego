@@ -5,9 +5,10 @@
 
 #include "serial_init.h"
 #include "log.h"
+#include "config_init.h"
 
-#include "debug_utils.h"
 // #define DEBUG
+#include "debug_utils.h"
 
 QueueHandle_t queue_serial_tx = 0;
 
@@ -18,7 +19,7 @@ void serial_tx(void *pvParameter)
     String data = "";
     for (;;)
     {
-        if (xQueueReceive(queue_serial_tx, &data_buffer, pdMS_TO_TICKS(100)) == pdTRUE)
+        if (xQueueReceive(queue_serial_tx, &data_buffer, pdMS_TO_TICKS(QUEQUE_TEMP_WAIT)) == pdTRUE)
         {
             data = String(data_buffer);
 
@@ -34,7 +35,7 @@ void serial_tx(void *pvParameter)
             write_log("Serial_com_send: " + data);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(50));
+        vTaskDelay(pdMS_TO_TICKS(SERIAL_TX_TEMP_WAIT));
     }
 }
 

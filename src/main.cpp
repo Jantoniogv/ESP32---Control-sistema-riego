@@ -10,8 +10,8 @@
 #include "nextion_screen.h"
 #include "time_npt.h"
 
-#include "debug_utils.h"
 // #define DEBUG
+#include "debug_utils.h"
 
 void setup()
 {

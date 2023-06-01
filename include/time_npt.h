@@ -4,10 +4,13 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
+// #define DEBUG
+#include "debug_utils.h"
+
 // Constantes y objetos necesarios para realizar la conexion NTP y obtener la hora
 const char *ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = 1;
-const int daylightOffset_sec = 1;
+const long gmtOffset_sec = -1;
+const int daylightOffset_sec = -1;
 
 void time_npt_init()
 {
@@ -25,7 +28,7 @@ String get_date()
 
     if (!getLocalTime(&timeinfo))
     {
-        Serial.println("Failed to obtain date");
+        DEBUG_PRINT("Failed to obtain date");
         return "-1";
     }
     else
@@ -45,7 +48,7 @@ String get_time()
 
     if (!getLocalTime(&timeinfo))
     {
-        Serial.println("Failed to obtain time");
+        DEBUG_PRINT("Failed to obtain time");
         return "-1";
     }
     else

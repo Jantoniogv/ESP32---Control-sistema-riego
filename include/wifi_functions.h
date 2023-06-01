@@ -91,7 +91,7 @@ bool wifiConnectSTA()
     if (configData.getWifiType() != WIFI_MODE_AP)
     {
         // Para el timer de reconexion del wifi en caso de que este activo a fin de evitar duplicaciones
-        xTimerStop(wifiReconnectTimer, 100);
+        xTimerStop(wifiReconnectTimer, 0);
 
         WiFi.begin(configData.getSsidSTA(), configData.getPassSTA());
 
@@ -109,7 +109,7 @@ bool wifiConnectSTA()
             }
 
             // Inicia el timer del wifi en caso de desconexion
-            xTimerStart(wifiReconnectTimer, 100);
+            xTimerStart(wifiReconnectTimer, 0);
         }
 
         if (WiFi.status() == WL_CONNECTED)
@@ -150,7 +150,7 @@ void reconnect()
         vTaskDelay(pdMS_TO_TICKS(50000));
 
         // Intenta la reconexion
-        DEBUG_PRINT("WiFi reconnect");
+        DEBUG_PRINT("WiFi reconnect...");
         WiFi.reconnect();
     }
 }

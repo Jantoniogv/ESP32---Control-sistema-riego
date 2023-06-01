@@ -9,6 +9,7 @@
 #include "nextion_screen.h"
 #include "serial_tx.h"
 #include "log.h"
+#include "config_init.h"
 
 // #define DEBUG
 #include "debug_utils.h"
@@ -29,7 +30,7 @@ void mqttPublish(void *pvParameter)
   String data = "";
   for (;;)
   {
-    if (xQueueReceive(queue_mqtt_publish, &data_buffer, pdMS_TO_TICKS(100)) == pdTRUE)
+    if (xQueueReceive(queue_mqtt_publish, &data_buffer, pdMS_TO_TICKS(QUEQUE_TEMP_WAIT)) == pdTRUE)
     {
       data = String(data_buffer);
 
@@ -77,7 +78,7 @@ void mqttPublish(void *pvParameter)
           button_val = "1";
           s_btDepGaloBajo = true;
         }
-        else
+        else if (payload == "OFF")
         {
           button_val = "0";
           s_btDepGaloBajo = false;
@@ -99,7 +100,7 @@ void mqttPublish(void *pvParameter)
           button_val = "1";
           s_btGaloBajoSec1 = true;
         }
-        else
+        else if (payload == "OFF")
         {
           button_val = "0";
           s_btGaloBajoSec1 = false;
@@ -121,7 +122,7 @@ void mqttPublish(void *pvParameter)
           button_val = "1";
           s_btGaloBajoSec2 = true;
         }
-        else
+        else if (payload == "OFF")
         {
           button_val = "0";
           s_btGaloBajoSec2 = false;
@@ -143,7 +144,7 @@ void mqttPublish(void *pvParameter)
           button_val = "1";
           s_btDepHuerto = true;
         }
-        else
+        else if (payload == "OFF")
         {
           button_val = "0";
           s_btDepHuerto = false;
@@ -165,7 +166,7 @@ void mqttPublish(void *pvParameter)
           button_val = "1";
           s_btHuertoSec1 = true;
         }
-        else
+        else if (payload == "OFF")
         {
           button_val = "0";
           s_btHuertoSec1 = false;
@@ -187,7 +188,7 @@ void mqttPublish(void *pvParameter)
           button_val = "1";
           s_btHuertoSec2 = true;
         }
-        else
+        else if (payload == "OFF")
         {
           button_val = "0";
           s_btHuertoSec2 = false;
@@ -209,7 +210,7 @@ void mqttPublish(void *pvParameter)
           button_val = "1";
           s_btAguaCasa = true;
         }
-        else
+        else if (payload == "OFF")
         {
           button_val = "0";
           s_btAguaCasa = false;
@@ -288,7 +289,7 @@ void onMqttConnect(bool sessionPresent)
         data.concat("=" + pload);
 
         // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
-        xQueueSend(queue_serial_tx, data.c_str(), pdMS_TO_TICKS(100));
+        xQueueSend(queue_serial_tx, data.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
       }
 
       // Configura e inicia el servidor mqtt
@@ -300,10 +301,6 @@ void onMqttConnect(bool sessionPresent)
         mqttClient.onDisconnect(onMqttDisconnect);
 
         mqttClient.onMessage(onMqttMessage);
-
-        // mqttClient.setServer(initMqttHost.c_str(), (uint16_t)initMqttPort);
-
-        // mqttClient.setCredentials(initMqttUser.c_str(), initMqttPass.c_str());
 
         mqttClient.setServer(configData.getMqttHost(), configData.getMqttPort());
 

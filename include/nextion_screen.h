@@ -7,6 +7,10 @@
 #include "serial_tx.h"
 #include "log.h"
 #include "debug_utils.h"
+#include "config_init.h"
+
+// #define DEBUG
+#include "debug_utils.h"
 
 #define NEXTION_TX 27
 #define NEXTION_RX 26
@@ -68,6 +72,7 @@ void nextion_send_command(String data)
     nexSerial.write(0xFF);
     nexSerial.write(0xFF);
 
+    DEBUG_PRINT("__r__ " + data);
     write_log("__r__ " + data);
 }
 
@@ -79,6 +84,7 @@ void await_res_dep_galo_bajo()
         nextion_send_command("page0." + btDepGaloBajo + ".val=0");
         s_btDepGaloBajo = false;
 
+        DEBUG_PRINT("n__r btDepGaloBajo = false");
         write_log("n__r btDepGaloBajo = false");
     }
     else
@@ -86,6 +92,7 @@ void await_res_dep_galo_bajo()
         nextion_send_command("page0." + btDepGaloBajo + ".val=1");
         s_btDepGaloBajo = true;
 
+        DEBUG_PRINT("n__r btDepGaloBajo = true");
         write_log("n__r btDepGaloBajo = true");
     }
 }
@@ -97,13 +104,15 @@ void await_res_dep_huerto()
         nextion_send_command("page0." + btDepHuerto + ".val=0");
         s_btDepHuerto = false;
 
-        write_log("n__r btDepHuerto = true");
+        DEBUG_PRINT("n__r btDepHuerto = false");
+        write_log("n__r btDepHuerto = false");
     }
     else
     {
         nextion_send_command("page0." + btDepHuerto + ".val=1");
         s_btDepHuerto = true;
 
+        DEBUG_PRINT("n__r btDepHuerto = true");
         write_log("n__r btDepHuerto = true");
     }
 }
@@ -115,13 +124,15 @@ void await_res_agua_casa()
         nextion_send_command("page0." + btAguaCasa + ".val=0");
         s_btAguaCasa = false;
 
-        write_log("n__r btAguaCasa = true");
+        DEBUG_PRINT("n__r btAguaCasa = false");
+        write_log("n__r btAguaCasa = false");
     }
     else
     {
         nextion_send_command("page0." + btAguaCasa + ".val=1");
         s_btAguaCasa = true;
 
+        DEBUG_PRINT("n__r btAguaCasa = true");
         write_log("n__r btAguaCasa = true");
     }
 }
@@ -193,7 +204,7 @@ void send_dep_galo_bajo(String estado)
 
         s_btDepGaloBajo = true;
     }
-    else
+    else if (estado == OFF)
     {
         s_btDepGaloBajo = false;
     }
@@ -201,7 +212,7 @@ void send_dep_galo_bajo(String estado)
     send_command = (String)evDepGaloBajo + "=" + estado;
 
     // Envia la orden a la cola de enviar por puerto serial
-    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
+    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
     xTimerStart(timer_dep_galo_bajo, pdMS_TO_TICKS(10));
 }
@@ -216,7 +227,7 @@ void send_dep_huerto(String estado)
 
         s_btDepHuerto = true;
     }
-    else
+    else if (estado == OFF)
     {
         s_btDepHuerto = false;
     }
@@ -224,7 +235,7 @@ void send_dep_huerto(String estado)
     send_command = (String)evDepHuerto + "=" + estado;
 
     // Envia la orden a la cola de enviar por puerto serial
-    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
+    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
     xTimerStart(timer_dep_huerto, pdMS_TO_TICKS(10));
 }
@@ -239,7 +250,7 @@ void send_agua_casa(String estado)
 
         s_btAguaCasa = true;
     }
-    else
+    else if (estado == OFF)
     {
         s_btAguaCasa = false;
     }
@@ -247,7 +258,7 @@ void send_agua_casa(String estado)
     send_command = (String)evCasa + "=" + estado;
 
     // Envia la orden a la cola de enviar por puerto serial
-    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
+    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
     xTimerStart(timer_agua_casa, pdMS_TO_TICKS(10));
 }
@@ -262,7 +273,7 @@ void send_galo_bajo_sec1(String estado)
 
         s_btGaloBajoSec1 = true;
     }
-    else
+    else if (estado == OFF)
     {
         s_btGaloBajoSec1 = false;
     }
@@ -270,7 +281,7 @@ void send_galo_bajo_sec1(String estado)
     send_command = (String)evDepGaloBajoSec1 + "=" + estado;
 
     // Envia la orden a la cola de enviar por puerto serial
-    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
+    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
     xTimerStart(timer_galo_bajo_sec1, pdMS_TO_TICKS(10));
 }
@@ -285,7 +296,7 @@ void send_galo_bajo_sec2(String estado)
 
         s_btGaloBajoSec2 = true;
     }
-    else
+    else if (estado == OFF)
     {
         s_btGaloBajoSec2 = false;
     }
@@ -293,7 +304,7 @@ void send_galo_bajo_sec2(String estado)
     send_command = (String)evDepGaloBajoSec2 + "=" + estado;
 
     // Envia la orden a la cola de enviar por puerto serial
-    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
+    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
     xTimerStart(timer_galo_bajo_sec2, pdMS_TO_TICKS(10));
 }
@@ -308,7 +319,7 @@ void send_huerto_sec1(String estado)
 
         s_btHuertoSec1 = true;
     }
-    else
+    else if (estado == OFF)
     {
         s_btHuertoSec1 = false;
     }
@@ -316,7 +327,7 @@ void send_huerto_sec1(String estado)
     send_command = (String)evDepHuertoSec1 + "=" + estado;
 
     // Envia la orden a la cola de enviar por puerto serial
-    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
+    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
     xTimerStart(timer_huerto_sec1, pdMS_TO_TICKS(10));
 }
@@ -331,7 +342,7 @@ void send_huerto_sec2(String estado)
 
         s_btHuertoSec2 = true;
     }
-    else
+    else if (estado == OFF)
     {
         s_btHuertoSec2 = false;
     }
@@ -339,7 +350,7 @@ void send_huerto_sec2(String estado)
     send_command = (String)evDepHuertoSec2 + "=" + estado;
 
     // Envia la orden a la cola de enviar por puerto serial
-    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(100));
+    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
     xTimerStart(timer_huerto_sec2, pdMS_TO_TICKS(10));
 }
@@ -360,6 +371,7 @@ String nextion_receive_data()
 // Maneja los datos recibidos por los eventos de la pantalla nextion
 void nextion_handler_receive_data()
 {
+
     String data = nextion_receive_data();
 
     if (data != "")
