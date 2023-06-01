@@ -15,7 +15,7 @@ void serial_rx()
 {
     if (SerialCom.available())
     {
-        String data = SerialCom.readStringUntil(';');
+        String data = SerialCom.readStringUntil('\n');
 
         // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
         xQueueSend(queue_mqtt_publish, data.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
