@@ -224,7 +224,8 @@ void init_server()
   // Inicia el servidor
   server.begin();
 
-  write_log("Servidor HTTP iniciado...");
+  // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
+  xQueueSend(queue_log, "Servidor HTTP iniciado...", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
   DEBUG_PRINT("Servidor HTTP iniciado...");
 }

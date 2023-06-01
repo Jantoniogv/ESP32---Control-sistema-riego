@@ -72,8 +72,10 @@ void nextion_send_command(String data)
     nexSerial.write(0xFF);
     nexSerial.write(0xFF);
 
-    DEBUG_PRINT("__r__ " + data);
-    write_log("__r__ " + data);
+    String log_nextion = "__r__ " + data;
+
+    DEBUG_PRINT(log_nextion);
+    xQueueSend(queue_log, log_nextion.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 }
 
 // Funciones que ejecutan los timers y cambian el estado del boton en caso de no recibir la confirmacion del dipositivo
@@ -85,7 +87,7 @@ void await_res_dep_galo_bajo()
         s_btDepGaloBajo = false;
 
         DEBUG_PRINT("n__r btDepGaloBajo = false");
-        write_log("n__r btDepGaloBajo = false");
+        xQueueSend(queue_log, "n__r btDepGaloBajo = false", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
     }
     else
     {
@@ -93,7 +95,7 @@ void await_res_dep_galo_bajo()
         s_btDepGaloBajo = true;
 
         DEBUG_PRINT("n__r btDepGaloBajo = true");
-        write_log("n__r btDepGaloBajo = true");
+        xQueueSend(queue_log, "n__r btDepGaloBajo = true", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
     }
 }
 
@@ -105,7 +107,7 @@ void await_res_dep_huerto()
         s_btDepHuerto = false;
 
         DEBUG_PRINT("n__r btDepHuerto = false");
-        write_log("n__r btDepHuerto = false");
+        xQueueSend(queue_log, "n__r btDepHuerto = false", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
     }
     else
     {
@@ -113,7 +115,7 @@ void await_res_dep_huerto()
         s_btDepHuerto = true;
 
         DEBUG_PRINT("n__r btDepHuerto = true");
-        write_log("n__r btDepHuerto = true");
+        xQueueSend(queue_log, "n__r btDepHuerto = true", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
     }
 }
 
@@ -125,7 +127,7 @@ void await_res_agua_casa()
         s_btAguaCasa = false;
 
         DEBUG_PRINT("n__r btAguaCasa = false");
-        write_log("n__r btAguaCasa = false");
+        xQueueSend(queue_log, "n__r btAguaCasa = false", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
     }
     else
     {
@@ -133,7 +135,7 @@ void await_res_agua_casa()
         s_btAguaCasa = true;
 
         DEBUG_PRINT("n__r btAguaCasa = true");
-        write_log("n__r btAguaCasa = true");
+        xQueueSend(queue_log, "n__r btAguaCasa = true", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
     }
 }
 
@@ -450,9 +452,8 @@ void init_nextion()
     timer_huerto_sec2 = xTimerCreate("timer_huerto_sec2", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_huerto_sec2));
 
     // Log de inicio de la pantalla
-    write_log("Pantalla nextion iniciada...");
-
     DEBUG_PRINT("Pantalla nextion iniciada...");
+    xQueueSend(queue_log, "Pantalla nextion iniciada...", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 }
 
 #endif //_NEXTION_SCREEN_H

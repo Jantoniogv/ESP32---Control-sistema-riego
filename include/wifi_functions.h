@@ -18,23 +18,26 @@ void WiFiEvent(WiFiEvent_t event)
     DEBUG_PRINT("[WiFi-event] event: ");
     DEBUG_PRINT(event);
 
+    String IP_soft_STA = "";
+
     switch (event)
     {
     case SYSTEM_EVENT_STA_GOT_IP:
 
         DEBUG_PRINT("WiFi connected");
-        DEBUG_PRINT("IP as soft STA: ");
-        DEBUG_PRINT(WiFi.localIP());
 
-        write_log("IP as soft STA: ");
-        write_log(WiFi.localIP().toString());
+        IP_soft_STA = "IP as soft STA: " + WiFi.localIP().toString();
+
+        DEBUG_PRINT(IP_soft_STA);
+        xQueueSend(queue_log, IP_soft_STA.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
         // Conecta al cliente mqtt
         connectToMqtt();
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
+
         DEBUG_PRINT("WiFi lost connection");
-        write_log("WiFi lost connection");
+        xQueueSend(queue_log, "WiFi lost connection", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
         /* // Para el timer de reconexion del wifi en caso de que este activo a fin de evitar duplicaciones
         xTimerStop(wifiReconnectTimer, 100);
@@ -75,13 +78,14 @@ void wifiConnectAP()
 
     wifiConfigAP(IPap);
 
-    write_log("IP as soft AP: " + WiFi.softAPIP().toString());
+    String IP_AP = "IP as soft AP: " + WiFi.softAPIP().toString();
 
     DEBUG_PRINT("SsidAP: " + String(configData.getSsidAP()));
 
     DEBUG_PRINT("PassAP: " + String(configData.getPassAP()));
 
-    DEBUG_PRINT("IP as soft AP: " + WiFi.softAPIP().toString());
+    DEBUG_PRINT(IP_AP);
+    xQueueSend(queue_log, IP_AP.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 }
 
 bool wifiConnectSTA()
