@@ -31,8 +31,10 @@ void serial_tx(void *pvParameter)
 
             SerialCom.print(data + "\n");
 
-            DEBUG_PRINT("Serial_com_send: " + data);
-            write_log("Serial_com_send: " + data);
+            String log_serial_tx = "Serial_com_send: " + data;
+
+            DEBUG_PRINT(log_serial_tx);
+            xQueueSend(queue_log, log_serial_tx.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
         }
 
         vTaskDelay(pdMS_TO_TICKS(SERIAL_TX_TEMP_WAIT));

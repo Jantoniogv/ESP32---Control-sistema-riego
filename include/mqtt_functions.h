@@ -23,7 +23,7 @@ TimerHandle_t mqttReconnectTimer;
 // Cola para procesar las instrucciones que se reciben en la tarea mqttPublish
 QueueHandle_t queue_mqtt_publish = 0;
 
-// Tareaque publica los mensajes en los diferentes topic y actualiza la pantalla nextion
+// Tarea que publica los mensajes en los diferentes topic y actualiza la pantalla nextion
 void mqttPublish(void *pvParameter)
 {
   char data_buffer[32] = {0};
@@ -251,7 +251,7 @@ void onMqttConnect(bool sessionPresent)
 {
       mqttSubscribe();
 
-      write_log("Cliente mqtt conectado");
+      xQueueSend(queue_mqtt_publish, "Cliente mqtt conectado", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
       DEBUG_PRINT("Cliente mqtt conectado...");
 }

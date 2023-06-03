@@ -20,8 +20,10 @@ void serial_rx()
         // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
         xQueueSend(queue_mqtt_publish, data.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-        DEBUG_PRINT("Serial_com_rec: " + data);
-        write_log("Serial_com_rec: " + data);
+        String log_serial_rx = "Serial_com_rec: " + data;
+
+        DEBUG_PRINT(log_serial_rx);
+        xQueueSend(queue_log, log_serial_rx.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
     }
 }
 
