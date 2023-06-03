@@ -71,7 +71,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoState, 1, false, payload.c_str());
 
-        xTimerStop(timer_dep_galo_bajo, pdMS_TO_TICKS(10));
+        xTimerStop(timer_dep_galo_bajo, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
 
         if (payload == "ON")
         {
@@ -93,7 +93,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoSec1State, 1, false, payload.c_str());
 
-        xTimerStop(timer_galo_bajo_sec1, pdMS_TO_TICKS(10));
+        xTimerStop(timer_galo_bajo_sec1, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
 
         if (payload == "ON")
         {
@@ -115,7 +115,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoSec2State, 1, false, payload.c_str());
 
-        xTimerStop(timer_galo_bajo_sec2, pdMS_TO_TICKS(10));
+        xTimerStop(timer_galo_bajo_sec2, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
 
         if (payload == "ON")
         {
@@ -137,7 +137,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoState, 1, false, payload.c_str());
 
-        xTimerStop(timer_dep_huerto, pdMS_TO_TICKS(10));
+        xTimerStop(timer_dep_huerto, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
 
         if (payload == "ON")
         {
@@ -159,7 +159,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoSec1State, 1, false, payload.c_str());
 
-        xTimerStop(timer_huerto_sec1, pdMS_TO_TICKS(10));
+        xTimerStop(timer_huerto_sec1, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
 
         if (payload == "ON")
         {
@@ -181,7 +181,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoSec2State, 1, false, payload.c_str());
 
-        xTimerStop(timer_huerto_sec2, pdMS_TO_TICKS(10));
+        xTimerStop(timer_huerto_sec2, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
 
         if (payload == "ON")
         {
@@ -203,7 +203,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evCasaState, 1, false, payload.c_str());
 
-        xTimerStop(timer_agua_casa, pdMS_TO_TICKS(10));
+        xTimerStop(timer_agua_casa, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
 
         if (payload == "ON")
         {

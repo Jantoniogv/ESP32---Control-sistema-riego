@@ -9,8 +9,8 @@
 
 // Constantes y objetos necesarios para realizar la conexion NTP y obtener la hora
 const char *ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = -1;
-const int daylightOffset_sec = -1;
+const long gmtOffset_sec = 3600;
+const int daylightOffset_sec = 3600;
 
 void time_npt_init()
 {

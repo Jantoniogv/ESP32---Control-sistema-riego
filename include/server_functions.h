@@ -224,9 +224,8 @@ void init_server()
   // Inicia el servidor
   server.begin();
 
-  write_log("Servidor HTTP iniciado...");
-
   DEBUG_PRINT("Servidor HTTP iniciado...");
+  write_log("Servidor HTTP iniciado...");
 }
 
 #endif //_SERVER_FUNCTIONS_H

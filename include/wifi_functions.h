@@ -26,8 +26,7 @@ void WiFiEvent(WiFiEvent_t event)
         DEBUG_PRINT("IP as soft STA: ");
         DEBUG_PRINT(WiFi.localIP());
 
-        write_log("IP as soft STA: ");
-        write_log(WiFi.localIP().toString());
+        write_log("IP as soft STA: " + WiFi.localIP().toString());
 
         // Conecta al cliente mqtt
         connectToMqtt();

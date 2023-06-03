@@ -2,6 +2,7 @@
 #define _SERIAL_INIT_H_
 
 #include <Arduino.h>
+#include <log.h>
 
 // #define DEBUG
 #include "debug_utils.h"
@@ -20,6 +21,7 @@ void serial_init()
     SerialCom.begin(115200, SERIAL_8N1, RS485_RX, RS485_TX);
 
     DEBUG_PRINT("Serial y SerialCom iniciados...");
+    write_log("Serial y SerialCom iniciados...");
 }
 
 #endif //_SERIAL_INIT_H_
