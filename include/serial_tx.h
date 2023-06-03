@@ -14,7 +14,6 @@ QueueHandle_t queue_serial_tx = 0;
 
 void serial_tx(void *pvParameter)
 {
-
     char data_buffer[32] = {0};
     String data = "";
     for (;;)
@@ -23,7 +22,7 @@ void serial_tx(void *pvParameter)
         {
             data = String(data_buffer);
 
-            // Borra el buffer en caso de tener algun byte
+            // Borra el buffer en caso de tener algun byte corrupto
             while (SerialCom.available())
             {
                 SerialCom.read();
@@ -31,10 +30,8 @@ void serial_tx(void *pvParameter)
 
             SerialCom.print(data + "\n");
 
-            String log_serial_tx = "Serial_com_send: " + data;
-
-            DEBUG_PRINT(log_serial_tx);
-            xQueueSend(queue_log, log_serial_tx.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
+            DEBUG_PRINT("Serial_com_send: " + data);
+            write_log("Serial_com_send: " + data);
         }
 
         vTaskDelay(pdMS_TO_TICKS(SERIAL_TX_TEMP_WAIT));

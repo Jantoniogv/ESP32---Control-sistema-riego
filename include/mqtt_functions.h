@@ -71,7 +71,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoState, 1, false, payload.c_str());
 
-        xTimerStop(timer_dep_galo_bajo, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+        xTimerStop(timer_dep_galo_bajo, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 
         if (payload == "ON")
         {
@@ -93,7 +93,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoSec1State, 1, false, payload.c_str());
 
-        xTimerStop(timer_galo_bajo_sec1, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+        xTimerStop(timer_galo_bajo_sec1, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 
         if (payload == "ON")
         {
@@ -115,7 +115,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepGaloBajoSec2State, 1, false, payload.c_str());
 
-        xTimerStop(timer_galo_bajo_sec2, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+        xTimerStop(timer_galo_bajo_sec2, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 
         if (payload == "ON")
         {
@@ -137,7 +137,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoState, 1, false, payload.c_str());
 
-        xTimerStop(timer_dep_huerto, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+        xTimerStop(timer_dep_huerto, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 
         if (payload == "ON")
         {
@@ -159,7 +159,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoSec1State, 1, false, payload.c_str());
 
-        xTimerStop(timer_huerto_sec1, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+        xTimerStop(timer_huerto_sec1, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 
         if (payload == "ON")
         {
@@ -181,7 +181,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evDepHuertoSec2State, 1, false, payload.c_str());
 
-        xTimerStop(timer_huerto_sec2, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+        xTimerStop(timer_huerto_sec2, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 
         if (payload == "ON")
         {
@@ -203,7 +203,7 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(evCasaState, 1, false, payload.c_str());
 
-        xTimerStop(timer_agua_casa, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+        xTimerStop(timer_agua_casa, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 
         if (payload == "ON")
         {
@@ -251,20 +251,20 @@ void onMqttConnect(bool sessionPresent)
 {
       mqttSubscribe();
 
-      xQueueSend(queue_mqtt_publish, "Cliente mqtt conectado", pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
-
       DEBUG_PRINT("Cliente mqtt conectado...");
+      write_log("Cliente mqtt conectado...");
 }
 
   // Funcion que se ejecuta cuando se ha desconectado del servidor
   void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
   {
-      DEBUG_PRINT("Disconnected from MQTT...");
+      DEBUG_PRINT("Cliente mqtt desconectado...");
+      write_log("Cliente mqtt desconectado...");
 
       if (WiFi.isConnected())
       {
-    xTimerStart(mqttReconnectTimer, 100);
-        }
+    xTimerStart(mqttReconnectTimer, TIMER_START_STOP_WAIT);
+      }
   }
 
       // Funcion que recibe las publicaciones suscritas

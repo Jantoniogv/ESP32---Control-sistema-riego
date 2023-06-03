@@ -5,6 +5,7 @@
 
 #include "mqtt_functions.h"
 #include "config.h"
+#include "config_init.h"
 #include "log.h"
 
 // #define DEBUG
@@ -74,13 +75,12 @@ void wifiConnectAP()
 
     wifiConfigAP(IPap);
 
-    write_log("IP as soft AP: " + WiFi.softAPIP().toString());
-
     DEBUG_PRINT("SsidAP: " + String(configData.getSsidAP()));
 
     DEBUG_PRINT("PassAP: " + String(configData.getPassAP()));
 
     DEBUG_PRINT("IP as soft AP: " + WiFi.softAPIP().toString());
+    write_log("IP as soft AP: " + WiFi.softAPIP().toString());
 }
 
 bool wifiConnectSTA()
@@ -108,7 +108,7 @@ bool wifiConnectSTA()
             }
 
             // Inicia el timer del wifi en caso de desconexion
-            xTimerStart(wifiReconnectTimer, 0);
+            xTimerStart(wifiReconnectTimer, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
         }
 
         if (WiFi.status() == WL_CONNECTED)

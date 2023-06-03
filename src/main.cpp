@@ -54,17 +54,11 @@ void setup()
   // Inicia la cola para procesar las instrucciones que se reciben en la tarea mqttPublish
   queue_mqtt_publish = xQueueCreate(20, sizeof(char) * 32);
 
-  // Inicia la cola para registrar los log
-  queue_log = xQueueCreate(20, sizeof(char) * 32);
-
   // Inicia la tarea que envia los datos por el puerto serie
   xTaskCreatePinnedToCore(serial_tx, "serial_tx", 2048, nullptr, 0, nullptr, 1);
 
   // Inicia la tarea que procesa los datos para enviar por mqtt y actualizar la pantalla nextion
   xTaskCreatePinnedToCore(mqttPublish, "mqtt_publish", 2048, nullptr, 0, nullptr, 1);
-
-  // Inicia la tarea que registra los log
-  xTaskCreatePinnedToCore(write_log, "log", 2048, nullptr, 0, nullptr, 1);
 
   // Iniciamos la conexion wifi como cliente una vez iniciada todos los procesos a fin de evitar problemas en caso de que la red WiFi no este disponible
   wifiConnectSTA();

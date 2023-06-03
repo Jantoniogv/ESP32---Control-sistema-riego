@@ -214,7 +214,7 @@ void send_dep_galo_bajo(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-    xTimerStart(timer_dep_galo_bajo, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+    xTimerStart(timer_dep_galo_bajo, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 }
 
 void send_dep_huerto(String estado)
@@ -237,7 +237,7 @@ void send_dep_huerto(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-    xTimerStart(timer_dep_huerto, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+    xTimerStart(timer_dep_huerto, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 }
 
 void send_agua_casa(String estado)
@@ -260,7 +260,7 @@ void send_agua_casa(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-    xTimerStart(timer_agua_casa, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+    xTimerStart(timer_agua_casa, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 }
 
 void send_galo_bajo_sec1(String estado)
@@ -283,7 +283,7 @@ void send_galo_bajo_sec1(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-    xTimerStart(timer_galo_bajo_sec1, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+    xTimerStart(timer_galo_bajo_sec1, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 }
 
 void send_galo_bajo_sec2(String estado)
@@ -306,7 +306,7 @@ void send_galo_bajo_sec2(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-    xTimerStart(timer_galo_bajo_sec2, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+    xTimerStart(timer_galo_bajo_sec2, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 }
 
 void send_huerto_sec1(String estado)
@@ -329,7 +329,7 @@ void send_huerto_sec1(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-    xTimerStart(timer_huerto_sec1, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+    xTimerStart(timer_huerto_sec1, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 }
 
 void send_huerto_sec2(String estado)
@@ -352,7 +352,7 @@ void send_huerto_sec2(String estado)
     // Envia la orden a la cola de enviar por puerto serial
     xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-    xTimerStart(timer_huerto_sec2, pdMS_TO_TICKS(NEXTION_TEMP_WAIT));
+    xTimerStart(timer_huerto_sec2, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
 }
 
 // Funcion que comprueba si hay datos disponibles de la pantalla nextion
@@ -450,8 +450,8 @@ void init_nextion()
     timer_huerto_sec2 = xTimerCreate("timer_huerto_sec2", pdMS_TO_TICKS(NEXTION_TIMER_TEMP_INIT_WAIT), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_huerto_sec2));
 
     // Log de inicio de la pantalla
-    write_log("Pantalla nextion iniciada...");
     DEBUG_PRINT("Pantalla nextion iniciada...");
+    write_log("Pantalla nextion iniciada...");
 }
 
 #endif //_NEXTION_SCREEN_H

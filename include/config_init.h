@@ -8,7 +8,7 @@
 #define SERIAL_TX_TEMP_WAIT 50
 
 #define NEXTION_TIMER_TEMP_INIT_WAIT 5000
-#define NEXTION_TEMP_WAIT 5
+#define TIMER_START_STOP_WAIT 5
 
 // Variables inicializacion wifi
 wifi_mode_t initWifiType = WIFI_MODE_APSTA;
