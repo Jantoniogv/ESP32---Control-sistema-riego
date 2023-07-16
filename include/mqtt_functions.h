@@ -8,6 +8,7 @@
 #include "device.h"
 #include "nextion_screen.h"
 #include "serial_tx.h"
+#include "mqtt_messages_receiver.h"
 #include "log.h"
 #include "config_init.h"
 
@@ -37,7 +38,9 @@ void mqttPublish(void *pvParameter)
       // Cadena que contiene el valor 1 o 0 que se envia a la pantalla nextion
       String button_val = "";
 
-      // Se comprueba el topic y se publica
+      // Se comprueba el topico a publicar
+
+      // Topicos niveles depositos
       if (data.indexOf((String)nivelDepGaloBajo) != -1)
       {
         String payload = data.substring(data.indexOf("=") + 1);
@@ -56,6 +59,7 @@ void mqttPublish(void *pvParameter)
         nextion_send_command("page0." + tDepHuerto + ".txt=\"" + payload + " %\"");
       }
 
+      // Topico consumo motor
       if (data.indexOf((String)intensidadMotor) != -1)
       {
         String payload = data.substring(data.indexOf("=") + 1);
@@ -65,6 +69,30 @@ void mqttPublish(void *pvParameter)
         nextion_send_command("page0." + tConsumoMotor + ".txt=\"" + payload + " A\"");
       }
 
+      // Topico arranque motor
+      if (data.indexOf((String)power_motor_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(power_motor_state, 1, false, payload.c_str());
+
+        xTimerStop(timer_power_motor, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
+
+        if (payload == "ON")
+        {
+          button_val = "1";
+          s_btPowerMotor = true;
+        }
+        else if (payload == "OFF")
+        {
+          button_val = "0";
+          s_btPowerMotor = false;
+        }
+
+        nextion_send_command("page0.btPowerMotor.val=" + button_val);
+      }
+
+      // Topicos deposito galo bajo y electrovalvulas de riego de este deposito
       if (data.indexOf((String)evDepGaloBajoState) != -1)
       {
         String payload = data.substring(data.indexOf("=") + 1);
@@ -131,6 +159,7 @@ void mqttPublish(void *pvParameter)
         nextion_send_command("page0.btGaloBajoSec2.val=" + button_val);
       }
 
+      // Topicos deposito huerto y electrovalvulas de riego de este deposito
       if (data.indexOf((String)evDepHuertoState) != -1)
       {
         String payload = data.substring(data.indexOf("=") + 1);
@@ -197,6 +226,7 @@ void mqttPublish(void *pvParameter)
         nextion_send_command("page0.btHuertoSec2.val=" + button_val);
       }
 
+      // Topico agua casa
       if (data.indexOf((String)evCasaState) != -1)
       {
         String payload = data.substring(data.indexOf("=") + 1);
@@ -218,13 +248,73 @@ void mqttPublish(void *pvParameter)
 
         nextion_send_command("page0.btAguaCasa.val=" + button_val);
       }
+
+      // Publicacion de los topicos recibidos en respuesta a la peticion de reinicio de los dispositivos que comunican con este
+      if (data.indexOf((String)restart_control_sistema_riego_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(restart_control_sistema_riego_state, 1, false, payload.c_str());
+      }
+
+      if (data.indexOf((String)restart_pozo_galo_bajo_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(restart_pozo_galo_bajo_state, 1, false, payload.c_str());
+      }
+
+      if (data.indexOf((String)restart_valvulas_galo_bajo_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(restart_valvulas_galo_bajo_state, 1, false, payload.c_str());
+      }
+
+      if (data.indexOf((String)restart_nivel_dep_galo_bajo_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(restart_nivel_dep_galo_bajo_state, 1, false, payload.c_str());
+      }
+
+      // Publicacion de los topicos recibidos en respuesta a la peticion de los log de los dispositivos que comunican con este
+      if (data.indexOf((String)log_control_sistema_riego_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(log_control_sistema_riego_state, 1, false, payload.c_str());
+      }
+
+      if (data.indexOf((String)log_pozo_galo_bajo_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(log_pozo_galo_bajo_state, 1, false, payload.c_str());
+      }
+
+      if (data.indexOf((String)log_valvulas_galo_bajo_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(log_valvulas_galo_bajo_state, 1, false, payload.c_str());
+      }
+
+      if (data.indexOf((String)log_nivel_dep_galo_bajo_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(log_nivel_dep_galo_bajo_state, 1, false, payload.c_str());
+      }
     }
   }
 }
 // Topic que se suscribe
 void mqttSubscribe()
 {
-  mqttClient.subscribe(evDepGaloBajo, 0);
+  mqttClient.subscribe(power_motor, 1);
+
+  mqttClient.subscribe(evDepGaloBajo, 1);
   mqttClient.subscribe(evDepGaloBajoSec1, 1);
   mqttClient.subscribe(evDepGaloBajoSec2, 1);
 
@@ -233,6 +323,16 @@ void mqttSubscribe()
   mqttClient.subscribe(evDepHuertoSec2, 1);
 
   mqttClient.subscribe(evCasa, 1);
+
+  mqttClient.subscribe(restart_control_sistema_riego, 1);
+  mqttClient.subscribe(restart_pozo_galo_bajo, 1);
+  mqttClient.subscribe(restart_valvulas_galo_bajo, 1);
+  mqttClient.subscribe(restart_nivel_dep_galo_bajo, 1);
+
+  mqttClient.subscribe(log_control_sistema_riego, 1);
+  mqttClient.subscribe(log_pozo_galo_bajo, 1);
+  mqttClient.subscribe(log_valvulas_galo_bajo, 1);
+  mqttClient.subscribe(log_nivel_dep_galo_bajo, 1);
 }
 
 // Funcion que conecta al servidor mqtt
@@ -256,8 +356,8 @@ void onMqttConnect(bool sessionPresent)
 }
 
   // Funcion que se ejecuta cuando se ha desconectado del servidor
-  void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
-  {
+void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
+{
       DEBUG_PRINT("Cliente mqtt desconectado...");
       write_log("Cliente mqtt desconectado...");
 
@@ -265,7 +365,7 @@ void onMqttConnect(bool sessionPresent)
       {
     xTimerStart(mqttReconnectTimer, TIMER_START_STOP_WAIT);
       }
-  }
+}
 
       // Funcion que recibe las publicaciones suscritas
       void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
@@ -289,7 +389,7 @@ void onMqttConnect(bool sessionPresent)
         data.concat("=" + pload);
 
         // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
-        xQueueSend(queue_serial_tx, data.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
+        xQueueSend(queue_mqtt_messages_receiver, data.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
       }
 
       // Configura e inicia el servidor mqtt

@@ -18,6 +18,9 @@
 #define nexSerial Serial1
 // #define nexSerial Serial
 
+// Boton arranque motor
+const String btPowerMotor = "btPowerMotor";
+
 // Botones de los depositos del pozo
 const String btDepGaloBajo = "btDepGaloBajo";
 const String btDepHuerto = "btDepHuerto";
@@ -37,6 +40,7 @@ const String tDepGaloBajo = "tDepGaloBajo";
 const String tDepHuerto = "tDepHuerto";
 
 // Estados botones nextion
+bool s_btPowerMotor = false;
 bool s_btDepGaloBajo = false;
 bool s_btDepHuerto = false;
 bool s_btAguaCasa = false;
@@ -47,6 +51,7 @@ bool s_btHuertoSec2 = false;
 
 // Temporizadores que inician periodo espera para la respuesta del los dispositivos y en caso de no recibir, se ejecuta y pone en OFF los botones
 // correspondientes de la pantalla
+TimerHandle_t timer_power_motor;
 TimerHandle_t timer_dep_galo_bajo;
 TimerHandle_t timer_dep_huerto;
 TimerHandle_t timer_agua_casa;
@@ -77,6 +82,26 @@ void nextion_send_command(String data)
 }
 
 // Funciones que ejecutan los timers y cambian el estado del boton en caso de no recibir la confirmacion del dipositivo
+void await_res_power_motor()
+{
+    if (s_btPowerMotor)
+    {
+        nextion_send_command("page0." + btPowerMotor + ".val=0");
+        s_btPowerMotor = false;
+
+        DEBUG_PRINT("n__r btPowerMotor = false");
+        write_log("n__r btPowerMotor = false");
+    }
+    else
+    {
+        nextion_send_command("page0." + btPowerMotor + ".val=1");
+        s_btPowerMotor = true;
+
+        DEBUG_PRINT("n__r btPowerMotor = true");
+        write_log("n__r btPowerMotor = true");
+    }
+}
+
 void await_res_dep_galo_bajo()
 {
     if (s_btDepGaloBajo)
@@ -193,7 +218,30 @@ void await_res_huerto_sec2()
     }
 }
 
-// Funciones manejadas por lo eventos de la pantalla
+// Funciones manejadas por los eventos de la pantalla
+void send_power_motor(String estado)
+{
+    String send_command = "";
+
+    // Marca el estado de los botones a fin de tener un registro de el
+    if (estado == ON)
+    {
+
+        s_btPowerMotor = true;
+    }
+    else if (estado == OFF)
+    {
+        s_btPowerMotor = false;
+    }
+
+    send_command = (String)power_motor + "=" + estado;
+
+    // Envia la orden a la cola de enviar por puerto serial
+    xQueueSend(queue_serial_tx, send_command.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
+
+    xTimerStart(timer_power_motor, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
+}
+
 void send_dep_galo_bajo(String estado)
 {
     String send_command = "";
@@ -378,6 +426,14 @@ void nextion_handler_receive_data()
     {
         String payload = "";
 
+        // Motor
+        if (data.indexOf(btPowerMotor) != -1)
+        {
+            payload = data.substring(data.indexOf("=") + 1);
+
+            send_power_motor(payload);
+        }
+
         // Depositos
         if (data.indexOf(btDepGaloBajo) != -1)
         {
@@ -441,6 +497,7 @@ void init_nextion()
     // nexSerial.begin(9600);
 
     // Iniciamos los temporizadores encargados de reconectar la conexion wifi y mqtt, en caso de desconexion
+    timer_power_motor = xTimerCreate("timer_power_motor", pdMS_TO_TICKS(NEXTION_TIMER_TEMP_INIT_WAIT), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_power_motor));
     timer_dep_galo_bajo = xTimerCreate("timer_dep_galo_bajo", pdMS_TO_TICKS(NEXTION_TIMER_TEMP_INIT_WAIT), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_dep_galo_bajo));
     timer_dep_huerto = xTimerCreate("timer_dep_huerto", pdMS_TO_TICKS(NEXTION_TIMER_TEMP_INIT_WAIT), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_dep_huerto));
     timer_agua_casa = xTimerCreate("timer_agua_casa", pdMS_TO_TICKS(NEXTION_TIMER_TEMP_INIT_WAIT), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(await_res_agua_casa));

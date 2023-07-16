@@ -6,6 +6,8 @@
 #include "mqtt_functions.h"
 #include "server_functions.h"
 #include "serial_rx.h"
+#include "serial_tx.h"
+#include "mqtt_messages_receiver.h"
 #include "log.h"
 #include "nextion_screen.h"
 #include "time_npt.h"
@@ -50,6 +52,9 @@ void setup()
 
   // Inicia la cola que almacena los datos a enviar por el puerto serie
   queue_serial_tx = xQueueCreate(20, sizeof(char) * 32);
+
+  // Inicia la cola que almacena los datos a gestionar los datos recibidos por mqtt
+  queue_mqtt_messages_receiver = xQueueCreate(20, sizeof(char) * 32);
 
   // Inicia la cola para procesar las instrucciones que se reciben en la tarea mqttPublish
   queue_mqtt_publish = xQueueCreate(20, sizeof(char) * 32);
