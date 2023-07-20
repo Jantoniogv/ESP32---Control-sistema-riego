@@ -62,6 +62,9 @@ void setup()
   // Inicia la tarea que envia los datos por el puerto serie
   xTaskCreatePinnedToCore(serial_tx, "serial_tx", 2048, nullptr, 0, nullptr, 1);
 
+    // Inicia la tarea que gestiona los datos recibidos por mqtt
+  xTaskCreatePinnedToCore(mqtt_messages_receiver, "mqtt_messages_receiver", 2048, nullptr, 0, nullptr, 1);
+
   // Inicia la tarea que procesa los datos para enviar por mqtt y actualizar la pantalla nextion
   xTaskCreatePinnedToCore(mqttPublish, "mqtt_publish", 2048, nullptr, 0, nullptr, 1);
 

@@ -23,7 +23,7 @@ void mqtt_messages_receiver(void *pvParameter)
             data = String(data_buffer);
 
             // Comprueba el mensage recibido y lo gestiona segun su tipo
-            if (data.indexOf((String)restart_control_sistema_riego_state) != -1)
+            if (data.indexOf((String)restart_control_sistema_riego) != -1)
             {
                 // Reiniciar ESP32
                 String send_state = (String)restart_control_sistema_riego_state + "=OK";
@@ -34,7 +34,7 @@ void mqtt_messages_receiver(void *pvParameter)
 
                 ESP.restart();
             }
-            else if (data.indexOf((String)log_control_sistema_riego_state) != -1)
+            else if (data.indexOf((String)log_control_sistema_riego) != -1)
             {
                 // Enviar log
                 String send_state = (String)log_control_sistema_riego_state + "=" + read_log();
