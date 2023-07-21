@@ -29,9 +29,7 @@ void mqtt_messages_receiver(void *pvParameter)
 
                 xQueueSend(queue_mqtt_publish, send_state.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
-                vTaskDelay(pdTICKS_TO_MS(1000));
-
-                ESP.restart();
+                xTimerStart(timer_restart, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
             }
             else if (data.indexOf((String)log_control_sistema_riego) != -1)
             {

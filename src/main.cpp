@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "config.h"
+#include "timer_restart.h"
 #include "serial_init.h"
 #include "wifi_functions.h"
 #include "server_functions.h"
@@ -32,6 +33,9 @@ void setup()
 
   // Inicia el temporizador encargado de reconectar la conexion wifi en caso de desconexion
   wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(60000), pdTRUE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(reconnect));
+
+  // Inicia el temporizador encargado de reiniciar el ESP32
+  timer_restart = xTimerCreate("timer_restart", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(restart_ESP32));
 
   // Se captura los eventos de la conexion wifi
   WiFi.onEvent(WiFiEvent);
