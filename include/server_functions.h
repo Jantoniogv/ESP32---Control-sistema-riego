@@ -8,6 +8,7 @@
 #include "save_flash.h"
 #include "config.h"
 #include "page_config.h"
+#include "log.h"
 
 // #define DEBUG
 #include "debug_utils.h"

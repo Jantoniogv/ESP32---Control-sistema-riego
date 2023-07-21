@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-#include "mqtt_functions.h"
+#include "mqtt_init.h"
 #include "config.h"
 #include "config_init.h"
 #include "log.h"

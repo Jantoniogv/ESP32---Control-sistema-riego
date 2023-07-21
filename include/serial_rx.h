@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #include "serial_init.h"
-#include "mqtt_functions.h"
+#include "mqtt_init.h"
 #include "log.h"
 #include "config_init.h"
 

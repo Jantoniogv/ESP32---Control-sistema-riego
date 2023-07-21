@@ -1,16 +1,15 @@
-#ifndef _MQTT_MESSAGES_HANDLER_H_
-#define _MQTT_MESSAGES_HANDLER_H_
+#ifndef _MQTT_MESSAGES_RECEIVER_H_
+#define _MQTT_MESSAGES_RECEIVER_H_
 
 #include <Arduino.h>
 
 #include "serial_tx.h"
 #include "log.h"
 #include "config_init.h"
+#include "mqtt_init.h"
 
 // #define DEBUG
 #include "debug_utils.h"
-
-QueueHandle_t queue_mqtt_messages_receiver = 0;
 
 void mqtt_messages_receiver(void *pvParameter)
 {
@@ -52,4 +51,4 @@ void mqtt_messages_receiver(void *pvParameter)
     }
 }
 
-#endif //_MQTT_MESSAGES_HANDLER_H_
+#endif //_MQTT_MESSAGES_RECEIVER_H_

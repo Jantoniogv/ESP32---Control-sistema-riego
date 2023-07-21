@@ -1,28 +1,16 @@
 #ifndef _MQTT_FUNCTIONS_H
 #define _MQTT_FUNCTIONS_H
 
-#include <WiFi.h>
-#include <AsyncMqttClient.h>
+#include <Arduino.h>
 
-#include "config.h"
-#include "device.h"
+#include "mqtt_init.h"
 #include "nextion_screen.h"
 #include "serial_tx.h"
-#include "mqtt_messages_receiver.h"
 #include "log.h"
 #include "config_init.h"
 
 // #define DEBUG
 #include "debug_utils.h"
-
-// Objeto mqttClient
-AsyncMqttClient mqttClient;
-
-// Timer reconectar mqtt
-TimerHandle_t mqttReconnectTimer;
-
-// Cola para procesar las instrucciones que se reciben en la tarea mqttPublish
-QueueHandle_t queue_mqtt_publish = 0;
 
 // Tarea que publica los mensajes en los diferentes topic y actualiza la pantalla nextion
 void mqttPublish(void *pvParameter)
@@ -309,106 +297,5 @@ void mqttPublish(void *pvParameter)
     }
   }
 }
-// Topic que se suscribe
-void mqttSubscribe()
-{
-  mqttClient.subscribe(power_motor, 1);
-
-  mqttClient.subscribe(evDepGaloBajo, 1);
-  mqttClient.subscribe(evDepGaloBajoSec1, 1);
-  mqttClient.subscribe(evDepGaloBajoSec2, 1);
-
-  mqttClient.subscribe(evDepHuerto, 1);
-  mqttClient.subscribe(evDepHuertoSec1, 1);
-  mqttClient.subscribe(evDepHuertoSec2, 1);
-
-  mqttClient.subscribe(evCasa, 1);
-
-  mqttClient.subscribe(restart_control_sistema_riego, 1);
-  mqttClient.subscribe(restart_pozo_galo_bajo, 1);
-  mqttClient.subscribe(restart_valvulas_galo_bajo, 1);
-  mqttClient.subscribe(restart_nivel_dep_galo_bajo, 1);
-
-  mqttClient.subscribe(log_control_sistema_riego, 1);
-  mqttClient.subscribe(log_pozo_galo_bajo, 1);
-  mqttClient.subscribe(log_valvulas_galo_bajo, 1);
-  mqttClient.subscribe(log_nivel_dep_galo_bajo, 1);
-}
-
-// Funcion que conecta al servidor mqtt
-void connectToMqtt()
-{
-  DEBUG_PRINT("Conectando al servidor mqtt...");
-
-  if (WiFi.isConnected())
-  {
-    mqttClient.connect();
-  }
-}
-
-// Funcion que se ejecuta cuando se ha conectado al servidor
-void onMqttConnect(bool sessionPresent)
-{
-      mqttSubscribe();
-
-      DEBUG_PRINT("Cliente mqtt conectado...");
-      write_log("Cliente mqtt conectado...");
-}
-
-  // Funcion que se ejecuta cuando se ha desconectado del servidor
-void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
-{
-      DEBUG_PRINT("Cliente mqtt desconectado...");
-      write_log("Cliente mqtt desconectado...");
-
-      if (WiFi.isConnected())
-      {
-    xTimerStart(mqttReconnectTimer, TIMER_START_STOP_WAIT);
-      }
-}
-
-      // Funcion que recibe las publicaciones suscritas
-      void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
-      {
-        DEBUG_PRINT("Publish received.");
-        DEBUG_PRINT("  topic: ");
-        DEBUG_PRINT(topic);
-        DEBUG_PRINT("  qos: ");
-        DEBUG_PRINT(properties.qos);
-
-        String pload = "";
-        for (int i = 0; i < len; i++)
-        {
-    pload += payload[i];
-        }
-
-        DEBUG_PRINT("  payload: ");
-        DEBUG_PRINT(pload);
-
-        String data = topic;
-        data.concat("=" + pload);
-
-        // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
-        xQueueSend(queue_mqtt_messages_receiver, data.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
-      }
-
-      // Configura e inicia el servidor mqtt
-      void InitMqtt()
-      {
-        Config configData;
-
-        mqttClient.onConnect(onMqttConnect);
-        mqttClient.onDisconnect(onMqttDisconnect);
-
-        mqttClient.onMessage(onMqttMessage);
-
-        mqttClient.setServer(configData.getMqttHost(), configData.getMqttPort());
-
-        mqttClient.setCredentials(configData.getMqttUser(), configData.getMqttPass());
-
-        DEBUG_PRINT("Configurado el cliente mqtt en...");
-
-        DEBUG_PRINT("Ip mqtt: " + initMqttHost + " - User mqtt: " + initMqttUser + " - Pass mqtt: " + initMqttPass + " - Port mqtt: " + String(initMqttPort));
-      }
 
 #endif // _MQTT_FUNCTIONS_H
