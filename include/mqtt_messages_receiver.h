@@ -28,7 +28,7 @@ void mqtt_messages_receiver(void *pvParameter)
                 // Reiniciar ESP32
                 String send_state = (String)restart_control_sistema_riego_state + "=OK";
 
-                xQueueSend(queue_serial_tx, send_state.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
+                xQueueSend(queue_mqtt_publish, send_state.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
                 vTaskDelay(pdTICKS_TO_MS(1000));
 
@@ -39,7 +39,7 @@ void mqtt_messages_receiver(void *pvParameter)
                 // Enviar log
                 String send_state = (String)log_control_sistema_riego_state + "=" + read_log();
 
-                xQueueSend(queue_serial_tx, send_state.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
+                xQueueSend(queue_mqtt_publish, send_state.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
             }
             else
             {
