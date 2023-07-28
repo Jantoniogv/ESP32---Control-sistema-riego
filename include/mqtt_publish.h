@@ -265,35 +265,6 @@ void mqttPublish(void *pvParameter)
 
         mqttClient.publish(restart_nivel_dep_galo_bajo_state, 1, false, payload.c_str());
       }
-
-      // Publicacion de los topicos recibidos en respuesta a la peticion de los log de los dispositivos que comunican con este
-      if (data.indexOf((String)log_control_sistema_riego_state) != -1)
-      {
-        String payload = data.substring(data.indexOf("=") + 1);
-
-        mqttClient.publish(log_control_sistema_riego_state, 1, false, payload.c_str());
-      }
-
-      if (data.indexOf((String)log_pozo_galo_bajo_state) != -1)
-      {
-        String payload = data.substring(data.indexOf("=") + 1);
-
-        mqttClient.publish(log_pozo_galo_bajo_state, 1, false, payload.c_str());
-      }
-
-      if (data.indexOf((String)log_valvulas_galo_bajo_state) != -1)
-      {
-        String payload = data.substring(data.indexOf("=") + 1);
-
-        mqttClient.publish(log_valvulas_galo_bajo_state, 1, false, payload.c_str());
-      }
-
-      if (data.indexOf((String)log_nivel_dep_galo_bajo_state) != -1)
-      {
-        String payload = data.substring(data.indexOf("=") + 1);
-
-        mqttClient.publish(log_nivel_dep_galo_bajo_state, 1, false, payload.c_str());
-      }
     }
   }
 }

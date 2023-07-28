@@ -4,6 +4,10 @@
 
 #include <wifi.h>
 
+#define TIME_TIMER_RESTART 5000
+#define TIME_TIMER_WIFI 60000
+#define TIME_TIMER_MQTT 2000
+
 #define QUEQUE_TEMP_WAIT 5
 #define SERIAL_TX_TEMP_WAIT 50
 

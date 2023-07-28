@@ -26,11 +26,6 @@ const char restart_pozo_galo_bajo[] = "pozo_galo_bajo/restart";
 const char restart_valvulas_galo_bajo[] = "valvulas_galo_bajo/restart";
 const char restart_nivel_dep_galo_bajo[] = "nivel_dep_galo_bajo/restart";
 
-const char log_control_sistema_riego[] = "control_sistema_riego/log";
-const char log_pozo_galo_bajo[] = "pozo_galo_bajo/log";
-const char log_valvulas_galo_bajo[] = "valvulas_galo_bajo/log";
-const char log_nivel_dep_galo_bajo[] = "nivel_dep_galo_bajo/log";
-
 // Topic enviar estados
 const char power_motor_state[] = "motor/galo/bajo/state";
 
@@ -56,10 +51,5 @@ const char restart_control_sistema_riego_state[] = "control_sistema_riego/restar
 const char restart_pozo_galo_bajo_state[] = "pozo_galo_bajo/restart/state";
 const char restart_valvulas_galo_bajo_state[] = "valvulas_galo_bajo/restart/state";
 const char restart_nivel_dep_galo_bajo_state[] = "nivel_dep_galo_bajo/restart/state";
-
-const char log_control_sistema_riego_state[] = "control_sistema_riego/log/state";
-const char log_pozo_galo_bajo_state[] = "pozo_galo_bajo/log/state";
-const char log_valvulas_galo_bajo_state[] = "valvulas_galo_bajo/log/state";
-const char log_nivel_dep_galo_bajo_state[] = "nivel_dep_galo_bajo/log/state";
 
 #endif // _DEVICE_H_

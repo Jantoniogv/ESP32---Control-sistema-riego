@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #include "serial_tx.h"
+#include "device.h"
 #include "log.h"
 #include "config_init.h"
 #include "mqtt_init.h"
@@ -25,18 +26,11 @@ void mqtt_messages_receiver(void *pvParameter)
             if (data.indexOf((String)restart_control_sistema_riego) != -1)
             {
                 // Reiniciar ESP32
-                String send_state = (String)restart_control_sistema_riego_state + "=OK";
+                String send_state = (String)restart_control_sistema_riego_state + "=" + ON;
 
                 xQueueSend(queue_mqtt_publish, send_state.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
 
                 xTimerStart(timer_restart, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
-            }
-            else if (data.indexOf((String)log_control_sistema_riego) != -1)
-            {
-                // Enviar log
-                String send_state = (String)log_control_sistema_riego_state + "=" + read_log();
-
-                xQueueSend(queue_mqtt_publish, send_state.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
             }
             else
             {

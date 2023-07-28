@@ -29,13 +29,13 @@ void setup()
   serial_init();
 
   // Inicia el temporizador encargado de reconectar el cliente mqtt en caso de desconexion
-  mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
+  timer_mqtt_reconnect = xTimerCreate("timer_mqtt_reconnect", pdMS_TO_TICKS(TIME_TIMER_MQTT), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
 
   // Inicia el temporizador encargado de reconectar la conexion wifi en caso de desconexion
-  wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(60000), pdTRUE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(reconnect));
+  timer_wifi_reconnect = xTimerCreate("timer_wifi_reconnect", pdMS_TO_TICKS(TIME_TIMER_WIFI), pdTRUE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(reconnect));
 
   // Inicia el temporizador encargado de reiniciar el ESP32
-  timer_restart = xTimerCreate("timer_restart", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(restart_ESP32));
+  timer_restart = xTimerCreate("timer_restart", pdMS_TO_TICKS(TIME_TIMER_RESTART), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(restart_ESP32));
 
   // Se captura los eventos de la conexion wifi
   WiFi.onEvent(WiFiEvent);

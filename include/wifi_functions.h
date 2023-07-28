@@ -11,7 +11,7 @@
 // #define DEBUG
 #include "debug_utils.h"
 
-TimerHandle_t wifiReconnectTimer;
+TimerHandle_t timer_wifi_reconnect;
 
 // Monitorea los eventos wifi
 void WiFiEvent(WiFiEvent_t event)
@@ -37,10 +37,10 @@ void WiFiEvent(WiFiEvent_t event)
         write_log("WiFi lost connection");
 
         /* // Para el timer de reconexion del wifi en caso de que este activo a fin de evitar duplicaciones
-        xTimerStop(wifiReconnectTimer, 100);
+        xTimerStop(timer_wifi_reconnect, 100);
 
         // Inicia el timer del wifi en caso de desconexion
-        xTimerStart(wifiReconnectTimer, 100);
+        xTimerStart(timer_wifi_reconnect, 100);
 
         // Para los eventos del wifi STA
         // WiFi.removeEvent(WiFiEvent); */
@@ -90,7 +90,7 @@ bool wifiConnectSTA()
     if (configData.getWifiType() != WIFI_MODE_AP)
     {
         // Para el timer de reconexion del wifi en caso de que este activo a fin de evitar duplicaciones
-        xTimerStop(wifiReconnectTimer, 0);
+        xTimerStop(timer_wifi_reconnect, 0);
 
         WiFi.begin(configData.getSsidSTA(), configData.getPassSTA());
 
@@ -108,7 +108,7 @@ bool wifiConnectSTA()
             }
 
             // Inicia el timer del wifi en caso de desconexion
-            xTimerStart(wifiReconnectTimer, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
+            xTimerStart(timer_wifi_reconnect, pdMS_TO_TICKS(TIMER_START_STOP_WAIT));
         }
 
         if (WiFi.status() == WL_CONNECTED)

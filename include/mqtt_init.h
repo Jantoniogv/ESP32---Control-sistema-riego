@@ -17,7 +17,7 @@
 AsyncMqttClient mqttClient;
 
 // Timer reconectar mqtt
-TimerHandle_t mqttReconnectTimer;
+TimerHandle_t timer_mqtt_reconnect;
 
 // Cola para procesar las instrucciones que se reciben en la tarea mqtt_messages_receiver
 QueueHandle_t queue_mqtt_messages_receiver = 0;
@@ -44,11 +44,6 @@ void mqttSubscribe()
   mqttClient.subscribe(restart_pozo_galo_bajo, 1);
   mqttClient.subscribe(restart_valvulas_galo_bajo, 1);
   mqttClient.subscribe(restart_nivel_dep_galo_bajo, 1);
-
-  mqttClient.subscribe(log_control_sistema_riego, 1);
-  mqttClient.subscribe(log_pozo_galo_bajo, 1);
-  mqttClient.subscribe(log_valvulas_galo_bajo, 1);
-  mqttClient.subscribe(log_nivel_dep_galo_bajo, 1);
 }
 
 // Funcion que conecta al servidor mqtt
@@ -79,7 +74,7 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
 
       if (WiFi.isConnected())
       {
-    xTimerStart(mqttReconnectTimer, TIMER_START_STOP_WAIT);
+    xTimerStart(timer_mqtt_reconnect, TIMER_START_STOP_WAIT);
       }
 }
 
