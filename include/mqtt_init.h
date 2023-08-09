@@ -60,66 +60,62 @@ void connectToMqtt()
 // Funcion que se ejecuta cuando se ha conectado al servidor
 void onMqttConnect(bool sessionPresent)
 {
-      mqttSubscribe();
+  mqttSubscribe();
 
-      DEBUG_PRINT("Cliente mqtt conectado...");
-      write_log("Cliente mqtt conectado...");
+  DEBUG_PRINT("Cliente mqtt conectado...");
+  write_log("Cliente mqtt conectado...");
 }
 
-  // Funcion que se ejecuta cuando se ha desconectado del servidor
+// Funcion que se ejecuta cuando se ha desconectado del servidor
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
 {
-      DEBUG_PRINT("Cliente mqtt desconectado...");
-      write_log("Cliente mqtt desconectado...");
+  DEBUG_PRINT("Cliente mqtt desconectado...");
+  write_log("Cliente mqtt desconectado...");
 
-      if (WiFi.isConnected())
-      {
+  if (WiFi.isConnected())
+  {
     xTimerStart(timer_mqtt_reconnect, TIMER_START_STOP_WAIT);
-      }
+  }
 }
 
-      // Funcion que recibe las publicaciones suscritas
-      void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
-      {
-        DEBUG_PRINT("Publish received.");
-        DEBUG_PRINT("  topic: ");
-        DEBUG_PRINT(topic);
-        DEBUG_PRINT("  qos: ");
-        DEBUG_PRINT(properties.qos);
+// Funcion que recibe las publicaciones suscritas
+void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
+{
+  DEBUG_PRINT("mqtt qos mensaje recibido: " + (String)properties.qos);
 
-        String pload = "";
-        for (int i = 0; i < len; i++)
-        {
+  String pload = "";
+  for (int i = 0; i < len; i++)
+  {
     pload += payload[i];
-        }
+  }
 
-        DEBUG_PRINT("  payload: ");
-        DEBUG_PRINT(pload);
+  String data = topic;
+  data.concat("=" + pload);
 
-        String data = topic;
-        data.concat("=" + pload);
+  DEBUG_PRINT("mqtt mensaje recibido: " + data);
+  write_log("mqtt mensaje recibido: " + data);
 
-        // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
-        xQueueSend(queue_mqtt_messages_receiver, data.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
-      }
+  // Envia la orden recibida desde mqtt a la cola de enviar por puerto serial
+  xQueueSend(queue_mqtt_messages_receiver, data.c_str(), pdMS_TO_TICKS(QUEQUE_TEMP_WAIT));
+}
 
-      // Configura e inicia el servidor mqtt
-      void InitMqtt()
-      {
-        Config configData;
+// Configura e inicia el servidor mqtt
+void InitMqtt()
+{
+  Config configData;
 
-        mqttClient.onConnect(onMqttConnect);
-        mqttClient.onDisconnect(onMqttDisconnect);
+  mqttClient.onConnect(onMqttConnect);
+  mqttClient.onDisconnect(onMqttDisconnect);
 
-        mqttClient.onMessage(onMqttMessage);
+  mqttClient.onMessage(onMqttMessage);
 
-        mqttClient.setServer(configData.getMqttHost(), configData.getMqttPort());
+  mqttClient.setServer(configData.getMqttHost(), configData.getMqttPort());
 
-        mqttClient.setCredentials(configData.getMqttUser(), configData.getMqttPass());
+  mqttClient.setCredentials(configData.getMqttUser(), configData.getMqttPass());
 
-        DEBUG_PRINT("Configurado el cliente mqtt en...");
+  DEBUG_PRINT("Configurado el cliente mqtt en...");
 
-        DEBUG_PRINT("Ip mqtt: " + initMqttHost + " - User mqtt: " + initMqttUser + " - Pass mqtt: " + initMqttPass + " - Port mqtt: " + String(initMqttPort));
-      }
+  DEBUG_PRINT("Ip mqtt: " + initMqttHost + " - User mqtt: " + initMqttUser + " - Pass mqtt: " + initMqttPass + " - Port mqtt: " + String(initMqttPort));
+}
 
 #endif // _MQTT_INIT_H_

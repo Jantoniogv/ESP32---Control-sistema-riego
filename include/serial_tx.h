@@ -28,6 +28,10 @@ void serial_tx(void *pvParameter)
                 SerialCom.read();
             }
 
+            SerialCom.print("__recolector__basura__\n");
+
+            vTaskDelay(pdMS_TO_TICKS(SERIAL_TX_TEMP_WAIT));
+
             SerialCom.print(data + "\n");
 
             DEBUG_PRINT("Serial_com_send: " + data);

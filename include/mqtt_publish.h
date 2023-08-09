@@ -237,6 +237,14 @@ void mqttPublish(void *pvParameter)
         nextion_send_command("page0.btAguaCasa.val=" + button_val);
       }
 
+      // Topico ventilador cuadro pozo
+      if (data.indexOf((String)dev_fan_state) != -1)
+      {
+        String payload = data.substring(data.indexOf("=") + 1);
+
+        mqttClient.publish(dev_fan_state, 1, false, payload.c_str());
+      }
+
       // Publicacion de los topicos recibidos en respuesta a la peticion de reinicio de los dispositivos que comunican con este
       if (data.indexOf((String)restart_control_sistema_riego_state) != -1)
       {

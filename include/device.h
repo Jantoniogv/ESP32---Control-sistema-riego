@@ -21,6 +21,8 @@ const char evDepHuertoSec2[] = "regar/huerto/sec2";
 
 const char evCasa[] = "deposito/casa";
 
+const char dev_fan[] = "pozo/ventilador";
+
 const char restart_control_sistema_riego[] = "control_sistema_riego/restart";
 const char restart_pozo_galo_bajo[] = "pozo_galo_bajo/restart";
 const char restart_valvulas_galo_bajo[] = "valvulas_galo_bajo/restart";
@@ -38,6 +40,8 @@ const char evDepHuertoSec1State[] = "regar/huerto/sec1/state";
 const char evDepHuertoSec2State[] = "regar/huerto/sec2/state";
 
 const char evCasaState[] = "deposito/casa/state";
+
+const char dev_fan_state[] = "pozo/ventilador/state";
 
 // Topic enviar niveles
 const char nivelDepGaloBajo[] = "nivel/deposito/galo/bajo";
