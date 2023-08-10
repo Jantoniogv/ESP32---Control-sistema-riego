@@ -40,6 +40,8 @@ void mqttSubscribe()
 
   mqttClient.subscribe(evCasa, 1);
 
+  mqttClient.subscribe(dev_fan, 1);
+
   mqttClient.subscribe(restart_control_sistema_riego, 1);
   mqttClient.subscribe(restart_pozo_galo_bajo, 1);
   mqttClient.subscribe(restart_valvulas_galo_bajo, 1);
